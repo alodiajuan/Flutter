@@ -184,7 +184,8 @@ class HomePage extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/tugas1'); // Navigate to Tugas1
+                        Navigator.pushNamed(
+                            context, '/tugas1'); // Navigate to Tugas1
                       },
                       child: TaskCard(
                         category: 'Penelitian',
@@ -196,7 +197,8 @@ class HomePage extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/tugas2'); // Navigate to another task
+                        Navigator.pushNamed(
+                            context, '/tugas2'); // Navigate to another task
                       },
                       child: TaskCard(
                         category: 'Pengabdian',
@@ -208,7 +210,8 @@ class HomePage extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/tugas3'); // Navigate to another task
+                        Navigator.pushNamed(
+                            context, '/tugas3'); // Navigate to another task
                       },
                       child: TaskCard(
                         category: 'Teknis',
@@ -229,6 +232,8 @@ class HomePage extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 0,
         unselectedFontSize: 0,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.home),
@@ -247,12 +252,24 @@ class HomePage extends StatelessWidget {
             label: '',
           ),
         ],
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
         onTap: (index) {
           // Navigate based on the tapped index
-          if (index == 3) {
-            Navigator.pushNamed(context, '/profile_screen'); // Navigate to profile screen
+          switch (index) {
+            case 0:
+              // Navigate to home
+              break; // Add your navigation logic here
+            case 1:
+              Navigator.pushNamed(
+                  context, '/contact'); // Navigate to contact screen
+              break;
+            case 2:
+              Navigator.pushNamed(
+                  context, '/notifikasi1'); // Navigate to notifications screen
+              break;
+            case 3:
+              Navigator.pushNamed(
+                  context, '/profile_screen'); // Navigate to profile screen
+              break;
           }
         },
       ),
@@ -423,7 +440,8 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Icon(FeatherIcons.user, size: 14), // Using Feather icon for person
+                  Icon(FeatherIcons.user,
+                      size: 14), // Using Feather icon for person
                 ],
               ),
             ],

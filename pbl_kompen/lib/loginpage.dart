@@ -79,7 +79,7 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
   String? _selectedRole;
 
-  final List<String> _roles = ['Mahasiswa', 'Dosen', 'Admin', 'Kaprodi'];
+  final List<String> _roles = ['Mahasiswa', 'Dosen'];
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:feather_icons/feather_icons.dart';
-import 'changepw.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'changepw.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -8,6 +9,7 @@ class ProfileScreen extends StatelessWidget {
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -20,19 +22,35 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog without logout
               },
-              child: const Text('Tidak'),
+              child: const Text(
+                'Tidak',
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
             TextButton(
               onPressed: () {
-                // Handle the logout action here
-                Navigator.of(context).pop(); // Close the dialog
-                // Add your logout logic here, e.g., clear user session
+                _logoutUser(context); // Call logout function
               },
-              child: const Text('Ya'),
+              child: const Text(
+                'Ya',
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Future<void> _logoutUser(BuildContext context) async {
+    // Clear all stored user data
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored preferences
+
+    // Navigate to login screen and clear navigation stack
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/login', // Pastikan ini adalah rute untuk halaman login
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -47,10 +65,10 @@ class ProfileScreen extends StatelessWidget {
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.grey.shade300,
-              backgroundImage: AssetImage('assets/images/profile.png'), // Profile image
+              backgroundImage: AssetImage('assets/images/profile.png'),
             ),
             const SizedBox(height: 20),
-            
+
             // Profile Information
             Container(
               padding: const EdgeInsets.all(16),
@@ -62,63 +80,15 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Name
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.indigo.shade900,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center (
-                      child: Text(
-                        'Zefania Yizreel Nefrit Sindhoe',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildProfileInfo('Zefania Yizreel Nefrit Sindhoe'),
                   const SizedBox(height: 10),
 
                   // ID
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.indigo.shade900,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        '2241760117',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildProfileInfo('2241760117'),
                   const SizedBox(height: 10),
 
                   // Status
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.indigo.shade900,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'kompetensi',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildProfileInfo('kompetensi'),
                   const SizedBox(height: 10),
 
                   // Change Password Button
@@ -126,7 +96,8 @@ class ProfileScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ChangePw()),
+                        MaterialPageRoute(
+                            builder: (context) => const ChangePw()),
                       );
                     },
                     child: const Text(
@@ -145,46 +116,49 @@ class ProfileScreen extends StatelessWidget {
             // Log Out Button
             ElevatedButton(
               onPressed: () {
-                _showLogoutDialog(context); // Show logout confirmation dialog
+                _showLogoutDialog(context);
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
+                backgroundColor: Colors.blue,
               ),
               child: const Text(
                 'LOG OUT',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
           ],
         ),
       ),
-      
+
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 0,
         unselectedFontSize: 0,
-        items: [
+        items: const [
           BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.home), // Using Feather icon for home
+            icon: Icon(FeatherIcons.home),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.messageCircle), // Using Feather icon for chat
+            icon: Icon(FeatherIcons.messageCircle),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.bell), // Using Feather icon for notifications
+            icon: Icon(FeatherIcons.bell),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.user), // Using Feather icon for user profile
+            icon: Icon(FeatherIcons.user),
             label: '',
           ),
         ],
@@ -193,23 +167,39 @@ class ProfileScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              // Navigate to Home
               Navigator.pushNamed(context, '/beranda');
               break;
             case 1:
-              // Navigate to Chat
               Navigator.pushNamed(context, '/contact');
               break;
             case 2:
-              // Navigate to Notifications
               Navigator.pushNamed(context, '/notifications');
               break;
             case 3:
-              // Navigate to Profile Screen
               Navigator.pushNamed(context, '/profile_screen');
               break;
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildProfileInfo(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.indigo.shade900,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

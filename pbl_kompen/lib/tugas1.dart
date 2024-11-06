@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:feather_icons/feather_icons.dart';
+import 'package:file_picker/file_picker.dart'; // Pastikan untuk mengimpor file_picker
 
 class Tugas1 extends StatelessWidget {
   const Tugas1({Key? key}) : super(key: key);
@@ -23,8 +24,9 @@ class Tugas1 extends StatelessWidget {
                   ),
                   const Text(
                     'Detail Tugas',
-                    style: TextStyle(fontSize: 20, 
-                    fontWeight: FontWeight.bold
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -152,40 +154,8 @@ class Tugas1 extends StatelessWidget {
 
             const Spacer(),
 
-            // File Upload Section
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'Pengumpulan Tugas :',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-
-Container(
-  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-  decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey),
-    borderRadius: BorderRadius.circular(8),
-  ),
-  child: TextField(
-    decoration: InputDecoration(
-      labelText: 'Select File (pdf/doc/excel)',
-      border: InputBorder.none,
-      contentPadding: const EdgeInsets.all(12),
-      suffixIcon: IconButton(
-        icon: const Icon(FeatherIcons.edit), // Correct usage of the edit icon
-        onPressed: () {
-          // Add your code to handle file selection here
-        },
-      ),
-    ),
-    readOnly: true, // Prevents direct editing of the TextField
-  ),
-),
+            // File Upload Widget
+            const FileUploadWidget(),
 
             // Chat Box Label
             Container(
@@ -268,6 +238,72 @@ Container(
           ],
         ),
       ),
+    );
+  }
+}
+
+class FileUploadWidget extends StatefulWidget {
+  const FileUploadWidget({Key? key}) : super(key: key);
+
+  @override
+  _FileUploadWidgetState createState() => _FileUploadWidgetState();
+}
+
+class _FileUploadWidgetState extends State<FileUploadWidget> {
+  String? fileName; // Variabel untuk menyimpan nama file yang dipilih
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // File Upload Section
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          alignment: Alignment.centerLeft,
+          child: const Text(
+            'Pengumpulan Tugas :',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: TextField(
+            decoration: InputDecoration(
+              labelText: 'Select File (pdf/doc/excel)',
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.all(12),
+              suffixIcon: IconButton(
+                icon: const Icon(FeatherIcons.edit), // Ikon edit
+                onPressed: () async {
+                  // Membuka pemilih file
+                  FilePickerResult? result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['pdf', 'doc', 'xlsx'], // Jenis file yang diizinkan
+                  );
+
+                  if (result != null) {
+                    // Jika file dipilih, ambil nama file
+                    setState(() {
+                      fileName = result.files.single.name; // Simpan nama file
+                    });
+                  }
+                },
+              ),
+            ),
+            readOnly: true, // Mencegah pengeditan langsung pada TextField
+            controller: TextEditingController(text: fileName), // Tampilkan nama file yang dipilih
+          ),
+        ),
+      ],
     );
   }
 }
