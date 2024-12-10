@@ -1,10 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:feather_icons/feather_icons.dart';
-import 'package:file_picker/file_picker.dart'; // Pastikan untuk mengimpor file_picker
+import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 
-class Tugas1 extends StatelessWidget {
-  const Tugas1({Key? key}) : super(key: key);
+// Model class to match your Laravel model
+class Tugas {
+  final int tugasId;
+  final String tugasKode;
+  final String tugasNama;
+  final String deskripsi;
+  final int jamKompen;
+  final String statusDibuka;
+  final DateTime tanggalMulai;
+  final DateTime tanggalAkhir;
+  final int kategoriId;
+  final int sdmId;
+  final SDM? sdm; // Made nullable as per updated model
+  final Kategori kategori;
+
+  Tugas({
+    required this.tugasId,
+    required this.tugasKode,
+    required this.tugasNama,
+    required this.deskripsi,
+    required this.jamKompen,
+    required this.statusDibuka,
+    required this.tanggalMulai,
+    required this.tanggalAkhir,
+    required this.kategoriId,
+    required this.sdmId,
+    this.sdm,  // Made nullable to match withDefault() in Laravel
+    required this.kategori,
+  });
+}
+
+class SDM {
+  final int sdmId;
+  final String nama;
+
+  SDM({required this.sdmId, required this.nama});
+}
+
+class Kategori {
+  final int kategoriId;
+  final String nama;
+
+  Kategori({required this.kategoriId, required this.nama});
+}
+
+class TugasDetailScreen extends StatelessWidget {
+  final Tugas tugas;
+
+  const TugasDetailScreen({Key? key, required this.tugas}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +70,9 @@ class Tugas1 extends StatelessWidget {
                     icon: const Icon(FeatherIcons.arrowLeft),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  const Text(
-                    'Detail Tugas',
-                    style: TextStyle(
+                  Text(
+                    tugas.tugasNama,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -33,13 +81,13 @@ class Tugas1 extends StatelessWidget {
               ),
             ),
 
-            // Penelitian Text
+            // Kategori
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: Alignment.centerLeft,
-              child: const Text(
-                'Penelitian',
-                style: TextStyle(
+              child: Text(
+                tugas.kategori.nama,
+                style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white,
                   backgroundColor: Color(0xFF1A237E),
@@ -48,28 +96,30 @@ class Tugas1 extends StatelessWidget {
               ),
             ),
 
-            // Name Text
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'Hendra Pradibta, S.E., M.Sc.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  backgroundColor: Color(0xFF1A237E),
-                  fontWeight: FontWeight.bold,
+            // SDM Name (nullable, check if exists)
+            if (tugas.sdm != null) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  tugas.sdm!.nama,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    backgroundColor: Color(0xFF1A237E),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
+            ],
 
             // Date Range
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               alignment: Alignment.centerLeft,
-              child: const Text(
-                '22/10/2024 - 24/10/2024',
-                style: TextStyle(
+              child: Text(
+                '${DateFormat('dd/MM/yyyy').format(tugas.tanggalMulai)} - ${DateFormat('dd/MM/yyyy').format(tugas.tanggalAkhir)}',
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.black87,
                 ),
@@ -109,9 +159,9 @@ class Tugas1 extends StatelessWidget {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
-                            '4.00',
-                            style: TextStyle(
+                          child: Text(
+                            '${tugas.jamKompen}.00',
+                            style: const TextStyle(
                               color: Colors.black87,
                               fontSize: 12,
                             ),
@@ -120,9 +170,9 @@ class Tugas1 extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Tugas dengan menilai hasil quiz mahasiswa kelas 3C. Disini membutuhkan 1 mahasiswa untuk mengerjakan mulai dari tanggal 13 September - 13 Oktober untuk mahasiswa yang bisa',
-                      style: TextStyle(
+                    Text(
+                      tugas.deskripsi,
+                      style: const TextStyle(
                         fontSize: 14,
                         color: Colors.white,
                       ),
@@ -132,7 +182,7 @@ class Tugas1 extends StatelessWidget {
               ),
             ),
 
-            // Excel Note
+            // Status
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
@@ -140,11 +190,11 @@ class Tugas1 extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Padding(
-                padding: EdgeInsets.all(12),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
                 child: Text(
-                  'Bisa memakai excel, semester 5',
-                  style: TextStyle(
+                  'Status: ${tugas.statusDibuka}',
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
@@ -193,7 +243,6 @@ class Tugas1 extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Show success dialog
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -211,9 +260,8 @@ class Tugas1 extends StatelessWidget {
                             ElevatedButton(
                               child: const Text('Ok'),
                               onPressed: () {
-                                // Close dialog and navigate to DetailTugas
-                                Navigator.pop(context); // Close the dialog
-                                Navigator.pushNamed(context, '/tugasdetail'); // Navigate to DetailTugas
+                                Navigator.pop(context);
+                                Navigator.pushNamed(context, '/tugasdetail');
                               },
                             ),
                           ],
@@ -250,14 +298,13 @@ class FileUploadWidget extends StatefulWidget {
 }
 
 class _FileUploadWidgetState extends State<FileUploadWidget> {
-  String? fileName; // Variabel untuk menyimpan nama file yang dipilih
+  String? fileName;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // File Upload Section
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           alignment: Alignment.centerLeft,
@@ -282,25 +329,23 @@ class _FileUploadWidgetState extends State<FileUploadWidget> {
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(12),
               suffixIcon: IconButton(
-                icon: const Icon(FeatherIcons.edit), // Ikon edit
+                icon: const Icon(FeatherIcons.edit),
                 onPressed: () async {
-                  // Membuka pemilih file
                   FilePickerResult? result = await FilePicker.platform.pickFiles(
                     type: FileType.custom,
-                    allowedExtensions: ['pdf', 'doc', 'xlsx'], // Jenis file yang diizinkan
+                    allowedExtensions: ['pdf', 'doc', 'xlsx'],
                   );
 
                   if (result != null) {
-                    // Jika file dipilih, ambil nama file
                     setState(() {
-                      fileName = result.files.single.name; // Simpan nama file
+                      fileName = result.files.single.name;
                     });
                   }
                 },
               ),
             ),
-            readOnly: true, // Mencegah pengeditan langsung pada TextField
-            controller: TextEditingController(text: fileName), // Tampilkan nama file yang dipilih
+            readOnly: true,
+            controller: TextEditingController(text: fileName),
           ),
         ),
       ],

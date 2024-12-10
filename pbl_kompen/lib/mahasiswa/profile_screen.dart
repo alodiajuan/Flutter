@@ -29,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                _logoutUser(context); // Call logout function
+                _logoutUser (context); // Call logout function
               },
               child: const Text(
                 'Ya',
@@ -42,7 +42,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _logoutUser(BuildContext context) async {
+  Future<void> _logoutUser (BuildContext context) async {
     // Clear all stored user data
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // Clear all stored preferences
@@ -137,49 +137,6 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-
-      // Bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 0,
-        unselectedFontSize: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.messageCircle),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.bell),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.user),
-            label: '',
-          ),
-        ],
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/beranda');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/contact');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/notifications');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile_screen');
-              break;
-          }
-        },
       ),
     );
   }
